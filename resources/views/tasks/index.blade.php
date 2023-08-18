@@ -1,13 +1,14 @@
 
+}
 <x-app-layout>
     <div class="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
         <form id="task-form" method="POST" action="{{ route('tasks.store') }}">
             @csrf
-            <textarea
+            <input
                 name="message"
                 placeholder="{{ __('So what do we do today?') }}"
                 class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
-            >{{ old('message') }}</textarea>
+            >{{ old('message') }}
 
             <x-input-error :messages="$errors->get('message')" class="mt-2" />
 
@@ -66,7 +67,6 @@
 
 
     </form>
-
         <div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
             @foreach ($tasks as $task)
                 <div class="p-6 flex space-x-2">
@@ -134,15 +134,7 @@
                 </div>
             @endforeach
         </div>
-        @if(isset($user))
-    <div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
-        @foreach ($user->assignedTasks as $task)
-            <div class="p-6">
-                {{ $task->message }} (Assignée à : {{ $task->assignedUsers->implode('name', ', ') }})
-            </div>
-        @endforeach
     </div>
-@endif
 </x-app-layout>
 
 <script>
