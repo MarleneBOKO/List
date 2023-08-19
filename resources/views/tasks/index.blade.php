@@ -1,5 +1,3 @@
-
-}
 <x-app-layout>
     <div class="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
         <form id="task-form" method="POST" action="{{ route('tasks.store') }}">
@@ -64,8 +62,6 @@
         </button>
     </div>
     @endif
-
-
     </form>
         <div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
             @foreach ($tasks as $task)
@@ -82,7 +78,7 @@
                                     <small class="text-sm text-gray-600"> &middot; {{ __('edited') }}</small>
                                 @endunless
                             </div>
-                            @if ($task->user->is(auth()->user()))
+                            @if ($task->user->id === auth()->user()->id || $task->users->contains(auth()->user()))
                                 <x-dropdown>
                                     <x-slot name="trigger">
                                         <button>
@@ -107,10 +103,12 @@
                                                  @csrf
                                                 <x-dropdown-link :href="route('tasks.markAsCompleted', $task)" onclick="event.preventDefault(); this.closest('form').submit();">
                                                     @if ($task->completed)
-                                                    <span class="text-green-500">{{ __('(Terminer)') }}</span> &middot;
-                                                        {{ __('Mark As Completed') }}
-                                                    @else
                                                     <span class="text-green-500">{{ __('(En cours)') }}</span> &middot;
+                                                    @else
+                                                    {{ __('Mark As Completed') }}
+                                                    <span class="text-green-500">{{ __('(Terminer)') }}</span> &middot;
+
+
                                                     @endif
                                                 </x-dropdown-link>
 
@@ -119,7 +117,7 @@
                                         </x-dropdown-link>
                                     </x-slot>
                                 </x-dropdown>
-                                @endif
+                            @endif
                             </div>
                             <p class="mt-4 text-lg text-gray-900">
                                 @if ($task->completed)

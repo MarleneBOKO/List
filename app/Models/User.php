@@ -18,17 +18,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-    public function task(): HasMany
+
+    public function task(): BelongsTo
     {
-        return $this->hasMany(Task::class);
+        return $this->belongsTo(Task::class);
     }
-    public function tasks(): HasMany
+    public function tasks(): BelongsToMany
     {
-        return $this->hasMany(Task::class);
+        return $this->belongsToMany(Task::class, 'task_user');
     }
 
+// ...
 
-    use HasApiTokens, Notifiable;
 
 
     /**
@@ -66,10 +67,6 @@ class User extends Authenticatable
 
 
 
-public function assignedTasks(): BelongsToMany
-    {
-        return $this->belongsToMany(Task::class, 'task_user');
-    }
 
 
 }

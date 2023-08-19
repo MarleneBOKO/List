@@ -36,8 +36,8 @@ class NewTask extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-        ->subject("New Chirp from {$this->task->user->name}")
-        ->greeting("New Chirp from {$this->task->user->name}")
+        ->subject("New Task from {$this->task->user->name}")
+        ->greeting("New Task from {$this->task->user->name}")
         ->line(Str::limit($this->task->message, 50))
         ->action('Go to Work', url('/'))
         ->line('Thank you for using our application!');
