@@ -23,10 +23,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Task::class);
     }
-    public function tasks(): BelongsToMany
+    public function tasks()
     {
-        return $this->belongsToMany(Task::class, 'task_user');
+        return $this->hasMany(Task::class, 'user_id');
     }
+
 
 // ...
 

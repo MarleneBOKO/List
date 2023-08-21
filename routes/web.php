@@ -20,6 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     Route::post('/tasks/{task}/markAsCompleted', [TaskController::class, 'markAsCompleted'])->name('tasks.markAsCompleted');
+    Route::get('/tasks/separated', [TaskController::class, 'separatedTasks'])->name('tasks.separated');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

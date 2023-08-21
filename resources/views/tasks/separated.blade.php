@@ -1,19 +1,13 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Assigned Task') }}
+        </h2>
+    </x-slot>
+
     <div class="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
-        <form id="task-form" method="POST" action="{{ route('tasks.store') }}">
-            @csrf
-            <input
-                name="message"
-                placeholder="{{ __('So what do we do today?') }}"
-                class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
-            >{{ old('message') }}
-
-            <x-input-error :messages="$errors->get('message')" class="mt-2" />
-
-            <x-primary-button  id="submit-button" class="mt-4">{{ __('task') }}</x-primary-button>
-        </form>
         @if(session('success'))
-        <div class="flex items-center p-4 mb-4 text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+        <div id="alert-border-1" class="flex items-center p-4 mb-4 text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
                 <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                 </svg>
@@ -21,7 +15,7 @@
                 <div class="ml-3 text-sm font-medium">
          {{ session('success') }}
             </div>
-            <button type="button" id="close-alert" class=" ml-auto -mx-1.5 -my-1.5 bg-green-50 text-bleu-500 rounded-lg focus:ring-2 focus:ring-blue-400 p-1.5 hover:bg-green-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-3" aria-label="Close">
+            <button type="button" id="close-alert" class=" ml-auto -mx-1.5 -my-1.5 bg-green-50 text-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 p-1.5 hover:bg-green-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-border-1" aria-label="Close">
                 <span class="sr-only">Close</span>
                 <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
@@ -64,7 +58,7 @@
     @endif
     </form>
         <div class="mt-6 bg-white shadow-sm rounded-lg divide-y">
-            @foreach ($tasks as $task)
+            @foreach ($userAssignedTasks as $task)
                 <div class="p-6 flex space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 -scale-x-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -78,7 +72,7 @@
                                     <small class="text-sm text-gray-600"> &middot; {{ __('edited') }}</small>
                                 @endunless
                             </div>
-                            @if ($task->user->id === auth()->user()->id )
+                            @if ($task->users->contains(auth()->user()))
                                 <x-dropdown>
                                     <x-slot name="trigger">
                                         <button>
@@ -135,22 +129,14 @@
     </div>
 </x-app-layout>
 
+
 <script>
-    const submitButton = document.getElementById('submit-button');
-    const alertBorder = document.getElementById('alert-border-1');
-    const closeAlertButton = document.getElementById('close-alert');
+    document.addEventListener('DOMContentLoaded', function() {
+        const alertBorder = document.getElementById('alert-border-1');
+        const closeAlertButton = document.getElementById('close-alert');
 
-    submitButton.addEventListener('click', function () {
-        const messageInput = document.querySelector('input[name="message"]');
-        if (messageInput.value.trim() !== '') {
-            alertBorder.classList.remove('hidden');
-            setTimeout(function () {
-                alertBorder.classList.add('hidden');
-            }, 5000); // Hide after 5 seconds
-        }
-    });
-
-    closeAlertButton.addEventListener('click', function () {
-        alertBorder.classList.add('hidden');
+        closeAlertButton.addEventListener('click', function () {
+            alertBorder.style.display = 'none';
+        });
     });
 </script>

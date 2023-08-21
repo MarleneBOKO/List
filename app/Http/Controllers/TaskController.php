@@ -13,22 +13,33 @@ class TaskController extends Controller
      * Display a listing of the resource.
      */
     public function index(): View
-    {
-        $user = auth()->user();
+{
+    $user = auth()->user();
 
-        return view('tasks.index', [
-            'tasks' => Task::where(function ($query) use ($user) {
-                $query->where('user_id', $user->id)
-                    ->orWhereHas('users', function ($subQuery) use ($user) {
-                        $subQuery->where('users.id', $user->id);
-                    });
-            })
+    return view('tasks.index', [
+        'tasks' => $user->tasks() // Utiliser la relation tasks() définie dans le modèle User
             ->with(['user', 'users'])
             ->latest()
             ->get(),
-        ]);
-    }
+    ]);
+}
 
+
+
+    public function separatedTasks(): View
+{
+    $user = auth()->user();
+
+    $userCreatedTasks = $user->tasks()->latest()->get();
+    $userAssignedTasks = Task::whereHas('users', function ($query) use ($user) {
+        $query->where('users.id', $user->id);
+    })->latest()->get();
+
+    return view('tasks.separated', [
+        'userCreatedTasks' => $userCreatedTasks,
+        'userAssignedTasks' => $userAssignedTasks,
+    ]);
+}
 
 
 

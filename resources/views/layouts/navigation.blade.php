@@ -18,7 +18,10 @@
                     <x-nav-link :href="route('tasks.index')" :active="request()->routeIs('tasks.index')">
                         {{ __('Tasks') }}
                     </x-nav-link>
-                    
+                    <x-nav-link :href="route('tasks.separated')" :active="request()->routeIs('tasks.separated')">
+                        {{ __('Assigned') }}
+                    </x-nav-link>
+
 
                 </div>
             </div>

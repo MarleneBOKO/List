@@ -30,7 +30,11 @@
                 <br><br>
                 <div class="mt-4 space-x-2">
                     <x-primary-button>{{ __('Save') }}</x-primary-button>
-                    <a href="{{ route('tasks.index') }}">{{ __('Cancel') }}</a>
+                    @if ($task->users->contains(auth()->user()))
+                        <a href="{{ route('tasks.separated') }}">{{ __('Cancel') }}</a>
+                    @else
+                       <a href="{{ route('tasks.index') }}">{{ __('Cancel') }}</a>
+                    @endif
                 </div>
             </div>
         </form>
