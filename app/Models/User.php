@@ -19,18 +19,30 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    public function task(): BelongsTo
+
+   
+    public function Project(): BelongsTo
     {
-        return $this->belongsTo(Task::class);
+        return $this->belongsTo(Project::class);
     }
-    public function tasks()
-    {
-        return $this->hasMany(Task::class, 'user_id');
-    }
+
 
 
 // ...
+public function tasks()
+{
+    return $this->hasMany(Task::class);
+}
 
+public function projects()
+{
+    return $this->hasMany(Project::class);
+}
+
+public function assignedTasks()
+{
+    return $this->belongsToMany(Task::class, 'task_user', 'user_id', 'task_id');
+}
 
 
     /**

@@ -15,12 +15,14 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('tasks.index')" :active="request()->routeIs('tasks.index')">
-                        {{ __('Tasks') }}
+                    <x-nav-link :href="route('projects.index')" :active="request()->routeIs('projects.index')">
+                        {{ __('Projects') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('tasks.separated')" :active="request()->routeIs('tasks.separated')">
+                    <x-nav-link :href="route('projects.separated')" :active="request()->routeIs('projects.separated')">
                         {{ __('Assigned') }}
                     </x-nav-link>
+                   
+
 
 
                 </div>
@@ -78,8 +80,11 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('tasks.index')" :active="request()->routeIs('tasks.index')">
-                {{ __('Tasks') }}
+            <x-responsive-nav-link :href="route('projects.index')" :active="request()->routeIs('projects.index')">
+                {{ __('Projects') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('projects.separated')" :active="request()->routeIs('projects.separated')">
+                {{ __('Assigned') }}
             </x-responsive-nav-link>
         </div>
 

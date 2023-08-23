@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,14 +20,21 @@ class UserController extends Controller
      {
          return $this->hasMany(Task::class);
      }
-
+     public function projects(): HasMany
+     {
+         return $this->hasMany(Project::class);
+     }
 
 public function viewAddedTasks()
 {
     $addedTasks = auth()->user()->addedTasks; // Remplacez addedTasks par la méthode que vous avez définie dans la relation
     return view('tasks.view_added', compact('addedTasks'));
 }
-
+public function viewAddedProject()
+{
+    $addedProjects = auth()->user()->addedProjects; // Remplacez addedTasks par la méthode que vous avez définie dans la relation
+    return view('Projecs.view_added', compact('addedProjects'));
+}
 
     public function index()
     {

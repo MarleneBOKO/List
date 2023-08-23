@@ -16,17 +16,24 @@ class Task extends Model
     {
         return $this->belongsToMany(User::class, 'task_user');
     }
-    public function user(): BelongsTo
+   
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function users(): BelongsToMany
+    public function users()
     {
-        return $this->belongsToMany(User::class, 'task_user');
+        return $this->belongsToMany(User::class, 'task_user', 'task_id', 'user_id');
     }
 
-   
     protected $fillable = ['message', 'completed', 'user_id'];
 
 protected $dispatchesEvents = [

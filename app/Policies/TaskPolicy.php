@@ -23,7 +23,12 @@ class TaskPolicy
     {
         //
     }
-
+    public function markAsCompleted(User $user, Task $task)
+    {
+        // Vérifier ici si l'utilisateur peut marquer la tâche comme terminée.
+        // Par exemple, vous pouvez vérifier si l'utilisateur est assigné à la tâche.
+        return $task->users->contains($user) && !$task->completed;
+    }
     /**
      * Determine whether the user can create models.
      */

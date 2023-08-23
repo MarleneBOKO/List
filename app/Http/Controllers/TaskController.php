@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use App\Models\Task;
+use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
 class TaskController extends Controller
@@ -55,18 +57,20 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, Project $project): RedirectResponse
     {
-        $validated = $request->validate([
+        $validatedData = $request->validate([
             'message' => 'required|string|max:255',
         ]);
 
-        $task = $request->user()->tasks()->create([
-            'message' => $validated['message'],
-            'user_id' => $request->user()->id,
+        $user = $request->user(); // Utilisateur actuel qui crée la tâche
+
+        $task = $project->tasks()->create([
+            'message' => $validatedData['message'],
+            'user_id' => $user->id,
         ]);
 
-        return redirect()->route('tasks.index')->with('success', 'Tâche créée avec succès !');
+        return redirect()->route('projects.show', ['project' => $project])->with('success', 'Tâche créée avec succès !');
     }
 
 
@@ -83,65 +87,58 @@ class TaskController extends Controller
      * Show the form for editing the specified resource.
      */
 
-   public function edit(Task $task): View
-{
-    $this->authorize('update', $task);
+     public function edit(Task $task, Project $project): View
+     {
+         $this->authorize('update', $task);
 
-    // Récupérer la liste des utilisateurs disponibles
-    $users = User::all(); // Assurez-vous d'importer le modèle User en haut du fichier
+         // Récupérer la liste des utilisateurs disponibles
+         $users = User::all();
+         $users = $project->users;
 
-    return view('tasks.edit', [
-        'task' => $task,
-        'users' => $users, // Passer la liste des utilisateurs à la vue
-    ]);
-}
+         // Récupérer la liste des utilisateurs assignés au projet
 
+         return view('projects.edit_task', [
+             'task' => $task,
+             'users' => $users,
+             'project' => $project, // Passer le projet à la vue
+         ]);
+     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+     public function update(Task $task, Project $project, Request $request): RedirectResponse
+          {
+         $this->authorize('update', $task);
 
-// ...
+         $validated = $request->validate([
+            'message' => 'required|string|max:255',
+            'completed' => 'nullable|boolean',
+            'user_id' => 'nullable|exists:users,id',
+        ]);
 
-// ...
+        $task->update([
+            'message' => $validated['message'],
+            'completed' => $validated['completed'] ?? 0,
+        ]);
 
-public function update(Request $request, Task $task): RedirectResponse
-{
-    $this->authorize('update', $task);
+        // Si un nouvel utilisateur est sélectionné, mettre à jour l'assignation de la tâche
+        if (array_key_exists('user_id', $validated)) {
+            $user = User::findOrFail($validated['user_id']);
+            $task->users()->attach([$user->id]); // Utiliser attach() au lieu de attch()
+        } else {
+            $task->users()->detach(); // Détacher tous les utilisateurs
+        }
 
-    $validated = $request->validate([
-        'message' => 'required|string|max:255',
-        'completed' => 'nullable|boolean',
-        'user_id' => 'nullable|exists:users,id',
-    ]);
-
-    // Mettre à jour les attributs de la tâche
-    $task->update([
-        'message' => $validated['message'],
-        'completed' => $validated['completed'] ?? 0,
-
-    ]);
-
-    // Assigner la tâche à un nouvel utilisateur (si un utilisateur est sélectionné)
-    if ($validated['user_id']) {
-        $user = User::findOrFail($validated['user_id']);
-        $task->users()->syncWithoutDetaching([$user->id]); // Utiliser la relation users()
+        return redirect()->route('projects.show', ['project' => $project])->with('success', 'Tâche modifiée avec succès !');
     }
 
-    return redirect()->route('tasks.index')->with('success', 'Tâche modifiée avec succès !');
-}
-
-// ...
-
-
-    public function destroy(task $task): RedirectResponse
+     public function destroy(Task $task): RedirectResponse
     {
-        //
         $this->authorize('delete', $task);
+
+        $project = $task->project; // Récupérer le projet associé à la tâche
 
         $task->delete();
 
-        return redirect()->route('tasks.index')->with('danger', 'Tâche supprimer avec succès !');
+        return redirect()->route('projects.show', ['project' => $project])->with('danger', 'Tâche supprimée avec succès !');
     }
 
     public function markAsCompleted(Task $task)
@@ -150,7 +147,6 @@ public function update(Request $request, Task $task): RedirectResponse
             'completed' => 1,
         ]);
 
-        return redirect()->route('tasks.index')->with('warning', 'Statut de la tâche mis à jour avec succès !');
+        return redirect()->back()->with('warning', 'Tâche marquée comme terminée avec succès !');
     }
-
 }
